@@ -2,6 +2,7 @@
 #include <iostream>
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/filters/voxel_grid.h>
 #include <boost/program_options.hpp>
 #include <boost/math/special_functions/round.hpp>
 
@@ -36,12 +37,24 @@ void colorizePointClouds(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud)
   }
 }
 
+void downsamplePointClouds(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud,
+                           pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud,
+                           float leafsize)
+{
+  pcl::VoxelGrid<pcl::PointXYZRGBA> sor;
+  sor.setInputCloud(cloud);
+  sor.setLeafSize(leafsize, leafsize, leafsize);
+  sor.filter(*filtered_cloud);
+}
+
 int main (int argc, char* argv[])
 {
   boost::program_options::options_description desc("Options");
   desc.add_options()
     ("help", "Print help message")
-    ("pcd_filename", boost::program_options::value<std::string>()->required(), "pcl pcd filename");
+    ("pcd_filename", boost::program_options::value<std::string>()->required(), "pcl pcd filename")
+    ("wc", boost::program_options::value<bool>()->default_value(true), "Display point clouds with colors")
+    ("ds", boost::program_options::value<bool>()->default_value(false), "Display downsampled point cloud");
 
   boost::program_options::variables_map vm;
   try {
@@ -65,8 +78,13 @@ int main (int argc, char* argv[])
 
   pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
-
-  colorizePointClouds(cloud);
+  if(vm["ds"].as<bool>()){
+    downsamplePointClouds(cloud, cloud, 0.05);
+  }
+  if(vm["wc"].as<bool>()){
+    colorizePointClouds(cloud);
+  }
+  
   viewer.showCloud(cloud);
 
 
