@@ -3,29 +3,37 @@
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
 #include <boost/program_options.hpp>
+#include <boost/math/special_functions/round.hpp>
 
-int user_data;
+typedef pcl::PointXYZRGBA PointT;
+typedef pcl::PointCloud<PointT> PointCloudT;
 
-void viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
+
+void colorizePointClouds(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud)
 {
-    viewer.setBackgroundColor (1.0, 0.5, 1.0);
-    pcl::PointXYZ o;
-    o.x = 1.0;
-    o.y = 0;
-    o.z = 0;
-    viewer.addSphere (o, 0.25, "sphere", 0);
-    std::cout << "i only run once" << std::endl;
-}
-
-void viewerPsycho (pcl::visualization::PCLVisualizer& viewer)
-{
-    // static unsigned count = 0;
-    // std::stringstream ss;
-    // ss << "Once per viewer loop: " << count++;
-    // viewer.removeShape ("text", 0);
-    // viewer.addText (ss.str(), 200, 300, "text", 0);
-    // //FIXME: possible race condition here:
-    // user_data++;
+  double min, max;
+  min = cloud->points[0].z;
+  max = cloud->points[0].z;
+  for (PointCloudT::iterator cloud_it = cloud->begin(); cloud_it != cloud->end(); ++cloud_it) {
+    if(min > cloud_it->z){
+      min = cloud_it->z;
+    }
+    if(max < cloud_it->z){
+      max = cloud_it->z;
+    }
+  }
+  double lut_scale = 255.0 / (max - min); // max is 255, min is 0
+  if(min == max){
+    lut_scale = 1.0;
+  }
+  for (PointCloudT::iterator cloud_it = cloud->begin(); cloud_it != cloud->end(); ++cloud_it) {
+    int value;
+    value = boost::math::iround( (cloud_it->z -min) * lut_scale);
+    // Blue(=min) -> Red(=max)
+    cloud_it->r = value;
+    cloud_it->g = 0;
+    cloud_it->b = 255 - value;
+  }
 }
 
 int main (int argc, char* argv[])
@@ -57,24 +65,13 @@ int main (int argc, char* argv[])
 
   pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
-  //blocks until the cloud is actually rendered
+
+  colorizePointClouds(cloud);
   viewer.showCloud(cloud);
 
-  //use the following functions to get access to the underlying more advanced/powerful
-  //PCLVisualizer
 
-
-  //This will only get called once
-  viewer.runOnVisualizationThreadOnce (viewerOneOff);
-
-  //This will get called once per visualization iteration
-  viewer.runOnVisualizationThread (viewerPsycho);
   while (!viewer.wasStopped ())
   {
-    //you can also do cool processing here
-    //FIXME: Note that this is running in a separate thread from viewerPsycho
-    //and you should guard against race conditions yourself...
-    user_data++;
   }
   return 0;
 }
