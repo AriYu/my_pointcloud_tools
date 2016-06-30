@@ -65,24 +65,13 @@ int main (int argc, char* argv[])
 
   pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
-  //blocks until the cloud is actually rendered
+
+  colorizePointClouds(cloud);
   viewer.showCloud(cloud);
 
-  //use the following functions to get access to the underlying more advanced/powerful
-  //PCLVisualizer
 
-
-  //This will only get called once
-  viewer.runOnVisualizationThreadOnce (viewerOneOff);
-
-  //This will get called once per visualization iteration
-  viewer.runOnVisualizationThread (viewerPsycho);
   while (!viewer.wasStopped ())
   {
-    //you can also do cool processing here
-    //FIXME: Note that this is running in a separate thread from viewerPsycho
-    //and you should guard against race conditions yourself...
-    user_data++;
   }
   return 0;
 }
