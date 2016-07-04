@@ -4,7 +4,7 @@ RansacRemoveGround::RansacRemoveGround(pcl::PointCloud<pcl::PointXYZRGB>::Ptr so
 {
   source_cloud_ptr_ = source_cloud_ptr;
 
-  this->setGridSize(1.0, 1.0);
+  this->setGridSize(2.0, 2.0);
   this->setRemoveGroundArea();
   this->setRansacDistThres(0.01);
   this->setRansacMaxIter(100);
@@ -32,6 +32,14 @@ void RansacRemoveGround::removeGround()
     if (grid_cloud_vec_[i].points.size() < 10) {
       continue;
     }
+    int r = rand() % 255;
+    int g = rand() % 255;
+    int b = rand() % 255;
+    for (size_t j = 0; j < grid_cloud_vec_[i].points.size(); ++j) {
+      grid_cloud_vec_[i].points[j].r = r;
+      grid_cloud_vec_[i].points[j].g = g;
+      grid_cloud_vec_[i].points[j].b = b;
+    }
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
 
@@ -44,21 +52,20 @@ void RansacRemoveGround::removeGround()
       return;
     }
 
-    std::cerr << "Model coefficients: " << coefficients->values[0] << " "
-              << coefficients->values[1] << " "
-              << coefficients->values[2] << " "
-              << coefficients->values[3] << std::endl;
+    // std::cerr << "Model coefficients: " << coefficients->values[0] << " "
+    //           << coefficients->values[1] << " "
+    //           << coefficients->values[2] << " "
+    //           << coefficients->values[3] << std::endl;
 
-    std::cerr << "Model inliers: " << inliers->indices.size () << std::endl;
+    // std::cerr << "Model inliers: " << inliers->indices.size () << std::endl;
     pcl::PointCloud<pcl::PointXYZRGB> inlier_cloud;
     for (size_t j = 0; j < inliers->indices.size (); ++j){
       pcl::PointXYZRGB point;
-      point.x = grid_cloud_vec_[i].points[inliers->indices[j]].x;
-      point.y = grid_cloud_vec_[i].points[inliers->indices[j]].y;
-      point.z = grid_cloud_vec_[i].points[inliers->indices[j]].z;
+      point = grid_cloud_vec_[i].points[inliers->indices[j]];
       inlier_cloud.push_back(point);
     }
     ground_removed_cloud_ += inlier_cloud;
+    //ground_removed_cloud_ += grid_cloud_vec_[i];
   }
 }
 

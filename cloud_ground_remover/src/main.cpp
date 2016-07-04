@@ -1,4 +1,5 @@
 #include "remove_ground.h"
+#include <pcl/visualization/cloud_viewer.h>
 
 int main(int argc, char *argv[])
 {
@@ -30,5 +31,11 @@ int main(int argc, char *argv[])
   RemoveGroundBase *ransac_remover = factory->Create("RansacRemover", cloud);
   ransac_remover->removeGround();
 
+  pcl::visualization::CloudViewer viewer("Cloud Viewer");
+  viewer.showCloud(ransac_remover->getGroundRemovedCloudPtr());
+  while(!viewer.wasStopped())
+  {
+  }
+  
   return 0;
 }
