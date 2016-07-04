@@ -1,6 +1,6 @@
 #include "ransac_remove_ground.h"
 
-RansacRemoveGround::RansacRemoveGround(pcl::PointCloud<pcl::PointXYZ>::Ptr source_cloud_ptr)
+RansacRemoveGround::RansacRemoveGround(pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_cloud_ptr)
 {
   source_cloud_ptr_ = source_cloud_ptr;
 
@@ -18,9 +18,9 @@ void RansacRemoveGround::removeGround()
 {
   // Preparetion
   this->divideGrid();
-  
+
   // Create the segmentation object
-  pcl::SACSegmentation<pcl::PointXYZ> seg;
+  pcl::SACSegmentation<pcl::PointXYZRGB> seg;
   // Optional
   seg.setOptimizeCoefficients (true);
   // Mandatory
@@ -50,9 +50,9 @@ void RansacRemoveGround::removeGround()
               << coefficients->values[3] << std::endl;
 
     std::cerr << "Model inliers: " << inliers->indices.size () << std::endl;
-    pcl::PointCloud<pcl::PointXYZ> inlier_cloud;
+    pcl::PointCloud<pcl::PointXYZRGB> inlier_cloud;
     for (size_t j = 0; j < inliers->indices.size (); ++j){
-      pcl::PointXYZ point;
+      pcl::PointXYZRGB point;
       point.x = grid_cloud_vec_[i].points[inliers->indices[j]].x;
       point.y = grid_cloud_vec_[i].points[inliers->indices[j]].y;
       point.z = grid_cloud_vec_[i].points[inliers->indices[j]].z;
@@ -62,14 +62,14 @@ void RansacRemoveGround::removeGround()
   }
 }
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr RansacRemoveGround::getGroundRemovedCloudPtr()
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr RansacRemoveGround::getGroundRemovedCloudPtr()
 {
    return ground_removed_cloud_.makeShared();
 }
 
 void RansacRemoveGround::setRemoveGroundArea()
 {
-  pcl::PointXYZ min_point, max_point;
+  pcl::PointXYZRGB min_point, max_point;
   pcl::getMinMax3D(*source_cloud_ptr_, min_point, max_point);
   max_cloud_x_ = max_point.x;
   min_cloud_x_ = min_point.x;

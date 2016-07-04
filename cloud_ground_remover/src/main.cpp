@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     return -1;
   }
   std::string pcd_fname = vm["pcd_filename"].as<std::string>();
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
   pcl::io::loadPCDFile (pcd_fname, *cloud);
 
 

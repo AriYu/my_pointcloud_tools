@@ -7,17 +7,17 @@ class Factory
 {
 public:
   RemoveGroundBase* Create(std::string type,
-                           pcl::PointCloud<pcl::PointXYZ>::Ptr source_cloud_ptr);
+                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_cloud_ptr);
 private:
   virtual RemoveGroundBase* CreateGroundRemover(std::string type,
-                                                pcl::PointCloud<pcl::PointXYZ>::Ptr source_cloud_ptr)=0;
+                                                pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_cloud_ptr)=0;
 };
 
 class RemoveGroundFactory: public Factory
 {
 public:
   RemoveGroundBase* CreateGroundRemover(std::string type,
-                                        pcl::PointCloud<pcl::PointXYZ>::Ptr source_cloud_ptr);
+                                        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_cloud_ptr);
 };
 
 #endif /* REMOVE_GROUND_H */
