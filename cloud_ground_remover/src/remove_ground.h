@@ -2,6 +2,7 @@
 #define REMOVE_GROUND_H
 
 #include "ransac_remove_ground.h"
+#include "region_growing_segmentation_remover.h"
 
 class Factory
 {

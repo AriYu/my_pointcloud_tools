@@ -13,6 +13,9 @@ RemoveGroundBase* RemoveGroundFactory::CreateGroundRemover(std::string type,
   if(type=="RansacRemover")
   {
     return new RansacRemoveGround(source_cloud_ptr);
+  }else if(type=="RegionGrowingSegmentationRemover")
+  {
+    return new RegionGrowingSegmentationRemoveGround(source_cloud_ptr);
   }
   else
   {

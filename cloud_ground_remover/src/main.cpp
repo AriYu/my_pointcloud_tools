@@ -26,13 +26,12 @@ int main(int argc, char *argv[])
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
   pcl::io::loadPCDFile (pcd_fname, *cloud);
 
-
   Factory *factory = new RemoveGroundFactory();
-  RemoveGroundBase *ransac_remover = factory->Create("RansacRemover", cloud);
-  ransac_remover->removeGround();
+  RemoveGroundBase *remover = factory->Create("RegionGrowingSegmentationRemover", cloud);
+  remover->removeGround();
 
   pcl::visualization::CloudViewer viewer("Cloud Viewer");
-  viewer.showCloud(ransac_remover->getGroundRemovedCloudPtr());
+  viewer.showCloud(remover->getGroundRemovedCloudPtr());
   while(!viewer.wasStopped())
   {
   }

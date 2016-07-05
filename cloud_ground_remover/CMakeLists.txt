@@ -15,5 +15,5 @@ add_definitions(${PCL_DEFINITIONS})
 add_executable (remove_surface src/remove_surface.cpp)
 target_link_libraries (remove_surface ${PCL_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
 
-add_executable(ground_remover src/main.cpp src/ransac_remove_ground.cpp src/remove_ground.cpp)
+add_executable(ground_remover src/main.cpp src/ransac_remove_ground.cpp src/remove_ground.cpp src/region_growing_segmentation_remover.cpp)
 target_link_libraries (ground_remover ${PCL_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
