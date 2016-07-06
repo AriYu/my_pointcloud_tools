@@ -4,10 +4,10 @@ RansacRemoveGround::RansacRemoveGround(pcl::PointCloud<pcl::PointXYZRGB>::Ptr so
 {
   source_cloud_ptr_ = source_cloud_ptr;
 
-  this->setGridSize(2.0, 2.0);
+  this->setGridSize(1,1);
   this->setRemoveGroundArea();
-  this->setRansacDistThres(0.01);
-  this->setRansacMaxIter(100);
+  this->setRansacDistThres(0.001);
+  this->setRansacMaxIter(1000);
 }
 
 RansacRemoveGround::~RansacRemoveGround()
@@ -22,7 +22,7 @@ void RansacRemoveGround::removeGround()
   // Create the segmentation object
   pcl::SACSegmentation<pcl::PointXYZRGB> seg;
   // Optional
-  seg.setOptimizeCoefficients (true);
+  //seg.setOptimizeCoefficients (true);
   // Mandatory
   seg.setModelType (pcl::SACMODEL_PLANE);
   seg.setMethodType (pcl::SAC_RANSAC);
@@ -32,13 +32,10 @@ void RansacRemoveGround::removeGround()
     if (grid_cloud_vec_[i].points.size() < 10) {
       continue;
     }
-    int r = rand() % 255;
-    int g = rand() % 255;
-    int b = rand() % 255;
     for (size_t j = 0; j < grid_cloud_vec_[i].points.size(); ++j) {
-      grid_cloud_vec_[i].points[j].r = r;
-      grid_cloud_vec_[i].points[j].g = g;
-      grid_cloud_vec_[i].points[j].b = b;
+      grid_cloud_vec_[i].points[j].r = 237;
+      grid_cloud_vec_[i].points[j].g = 17;
+      grid_cloud_vec_[i].points[j].b = 193;
     }
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -51,7 +48,7 @@ void RansacRemoveGround::removeGround()
       PCL_ERROR ("Could not estimate a planar model for the given dataset.");
       return;
     }
-
+    plane_coefficient_vec_.push_back(*coefficients);
     // std::cerr << "Model coefficients: " << coefficients->values[0] << " "
     //           << coefficients->values[1] << " "
     //           << coefficients->values[2] << " "
@@ -72,6 +69,11 @@ void RansacRemoveGround::removeGround()
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr RansacRemoveGround::getGroundRemovedCloudPtr()
 {
    return ground_removed_cloud_.makeShared();
+}
+
+std::vector<pcl::ModelCoefficients> RansacRemoveGround::getPlaneCoEfficientsVector()
+{
+  return plane_coefficient_vec_;
 }
 
 void RansacRemoveGround::setRemoveGroundArea()

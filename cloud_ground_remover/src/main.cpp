@@ -1,5 +1,6 @@
 #include "remove_ground.h"
-#include <pcl/visualization/cloud_viewer.h>
+#include <boost/thread/thread.hpp>
+#include <pcl/visualization/pcl_visualizer.h>
 
 int main(int argc, char *argv[])
 {
@@ -27,14 +28,29 @@ int main(int argc, char *argv[])
   pcl::io::loadPCDFile (pcd_fname, *cloud);
 
   Factory *factory = new RemoveGroundFactory();
-  RemoveGroundBase *remover = factory->Create("RegionGrowingSegmentationRemover", cloud);
+  RemoveGroundBase *remover = factory->Create("RansacRemover", cloud);
   remover->removeGround();
 
-  pcl::visualization::CloudViewer viewer("Cloud Viewer");
-  viewer.showCloud(remover->getGroundRemovedCloudPtr());
-  while(!viewer.wasStopped())
-  {
+  // pcl::visualization::CloudViewer viewer("Cloud Viewer");
+  boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("CloudViewer"));
+  viewer->setBackgroundColor(0, 0, 0);
+  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(remover->getGroundRemovedCloudPtr());
+  viewer->addPointCloud<pcl::PointXYZRGB>(remover->getGroundRemovedCloudPtr(), rgb, "removed cloud");
+  // viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "removed cloud");
+  viewer->addCoordinateSystem(1.0);
+  viewer->initCameraParameters();
+  std::vector<pcl::ModelCoefficients> coefficients = remover->getPlaneCoEfficientsVector();
+  for (size_t i = 0; i < coefficients.size(); ++i) {
+    std::stringstream plane_name;
+    plane_name << "plane_" << i;
+    viewer->addPlane(coefficients[i], plane_name.str());
   }
-  
+  // viewer.showCloud(remover->getGroundRemovedCloudPtr());
+  while(!viewer->wasStopped())
+  {
+    viewer->spinOnce(100);
+    boost::this_thread::sleep(boost::posix_time::microseconds(100000));
+  }
+
   return 0;
 }
