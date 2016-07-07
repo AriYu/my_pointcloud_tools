@@ -92,7 +92,7 @@ void RansacRemoveGround::removeGround()
     for (size_t j = 0; j < 3; ++j) {
       cos_dist += (plane_vector.val_[j] * origin_vector.val_[j]);
     }
-    std::cout << "cos dist : " << cos_dist << std::endl;
+    //std::cout << "cos dist : " << cos_dist << std::endl;
     if (fabs(cos_dist) > 0.8) {
       PlaneModelParam plane_model_param;
       plane_model_param.coefficients_ = *coefficients;

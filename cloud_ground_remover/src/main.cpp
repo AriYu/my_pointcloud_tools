@@ -2,6 +2,32 @@
 #include <boost/thread/thread.hpp>
 #include <pcl/visualization/pcl_visualizer.h>
 
+std::string getTimeAsString()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time (&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer,80,"%Y%m%d%I%M%S",timeinfo);
+  std::string str(buffer);
+  return str;
+}
+
+bool save_flag = false;
+void keyboardEventOccurred (const pcl::visualization::KeyboardEvent &event,
+                            void* viewer_void)
+{
+  boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer = *static_cast<boost::shared_ptr<pcl::visualization::PCLVisualizer> *> (viewer_void);
+  if (event.getKeySym () == "s" && event.keyDown ())
+  {
+    save_flag = true;
+    viewer->close();
+  }
+}
+
 int main(int argc, char *argv[])
 {
   boost::program_options::options_description desc("Options");
@@ -31,14 +57,14 @@ int main(int argc, char *argv[])
   RemoveGroundBase *remover = factory->Create("RansacRemover", cloud);
   remover->removeGround();
 
-  // pcl::visualization::CloudViewer viewer("Cloud Viewer");
   boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("CloudViewer"));
   viewer->setBackgroundColor(0, 0, 0);
   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(remover->getGroundRemovedCloudPtr());
   viewer->addPointCloud<pcl::PointXYZRGB>(remover->getGroundRemovedCloudPtr(), rgb, "removed cloud");
-  // viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "removed cloud");
+
   viewer->addCoordinateSystem(1.0);
   viewer->initCameraParameters();
+  viewer->registerKeyboardCallback(keyboardEventOccurred, (void*)&viewer);
   std::vector<PlaneModelParam> plane_model_param = remover->getPlaneCoEfficientsVector();
   for (size_t i = 0; i < plane_model_param.size(); ++i) {
     std::stringstream plane_name;
@@ -48,12 +74,19 @@ int main(int argc, char *argv[])
                      plane_model_param[i].position_.y,
                      plane_model_param[i].position_.z, plane_name.str());
   }
-  // viewer.showCloud(remover->getGroundRemovedCloudPtr());
+
   while(!viewer->wasStopped())
   {
     viewer->spinOnce(100);
     boost::this_thread::sleep(boost::posix_time::microseconds(100000));
   }
-
+  if(save_flag == true){
+    std::string dst_filename;
+    dst_filename += "./";
+    dst_filename += getTimeAsString();
+    dst_filename += ".pcd";
+    pcl::io::savePCDFileBinary(dst_filename, *remover->getGroundRemovedCloudPtr());
+    std::cout << "Saved to : " << dst_filename << std::endl;
+  }
   return 0;
 }
