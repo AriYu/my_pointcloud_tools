@@ -32,14 +32,14 @@ public:
   void setRansacDistThres(float dist_threshold);
   void removeGround();
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr getGroundRemovedCloudPtr();
-  std::vector<pcl::ModelCoefficients> getPlaneCoEfficientsVector();
+  std::vector<PlaneModelParam> getPlaneCoEfficientsVector();
 private:
   void setRemoveGroundArea();
   void divideGrid();
   int grid_x_len_;
   int grid_y_len_;
   std::vector<pcl::PointCloud<pcl::PointXYZRGB> > grid_cloud_vec_;
-  std::vector<pcl::ModelCoefficients> plane_coefficient_vec_;
+  std::vector<PlaneModelParam> plane_coefficient_vec_;
   pcl::PointCloud<pcl::PointXYZRGB> ground_removed_cloud_;
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_cloud_ptr_;
   float max_cloud_x_;

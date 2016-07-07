@@ -39,11 +39,14 @@ int main(int argc, char *argv[])
   // viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "removed cloud");
   viewer->addCoordinateSystem(1.0);
   viewer->initCameraParameters();
-  std::vector<pcl::ModelCoefficients> coefficients = remover->getPlaneCoEfficientsVector();
-  for (size_t i = 0; i < coefficients.size(); ++i) {
+  std::vector<PlaneModelParam> plane_model_param = remover->getPlaneCoEfficientsVector();
+  for (size_t i = 0; i < plane_model_param.size(); ++i) {
     std::stringstream plane_name;
     plane_name << "plane_" << i;
-    viewer->addPlane(coefficients[i], plane_name.str());
+    viewer->addPlane(plane_model_param[i].coefficients_,
+                     plane_model_param[i].position_.x,
+                     plane_model_param[i].position_.y,
+                     plane_model_param[i].position_.z, plane_name.str());
   }
   // viewer.showCloud(remover->getGroundRemovedCloudPtr());
   while(!viewer->wasStopped())

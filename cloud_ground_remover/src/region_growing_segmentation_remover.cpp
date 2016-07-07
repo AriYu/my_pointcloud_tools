@@ -80,9 +80,9 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr RegionGrowingSegmentationRemoveGround::ge
    return ground_removed_cloud_.makeShared();
 }
 
-std::vector<pcl::ModelCoefficients> RegionGrowingSegmentationRemoveGround::getPlaneCoEfficientsVector()
+std::vector<PlaneModelParam> RegionGrowingSegmentationRemoveGround::getPlaneCoEfficientsVector()
 {
-  return plane_coefficient_vec_;
+  return plane_model_param_vec_;
 }
 
 void RegionGrowingSegmentationRemoveGround::setRemoveGroundArea()
