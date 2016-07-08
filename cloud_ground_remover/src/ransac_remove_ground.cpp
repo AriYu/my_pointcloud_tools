@@ -36,7 +36,7 @@ RansacRemoveGround::RansacRemoveGround(pcl::PointCloud<pcl::PointXYZRGB>::Ptr so
 {
   source_cloud_ptr_ = source_cloud_ptr;
 
-  this->setGridSize(1,1);
+  this->setGridSize(0.3, 0.3);
   this->setRemoveGroundArea();
   this->setRansacDistThres(0.3);
   this->setRansacMaxIter(100000);
@@ -142,7 +142,7 @@ void RansacRemoveGround::setRemoveGroundArea()
   min_cloud_y_ = min_point.y;
 }
 
-void RansacRemoveGround::setGridSize(int x_length, int y_length)
+void RansacRemoveGround::setGridSize(double x_length, double y_length)
 {
   grid_x_len_ = x_length;
   grid_y_len_ = y_length;

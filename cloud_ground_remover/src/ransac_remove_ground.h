@@ -27,7 +27,7 @@ class RansacRemoveGround: public RemoveGroundBase
 public:
   RansacRemoveGround(pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_cloud_ptr);
   virtual ~RansacRemoveGround();
-  void setGridSize(int x_length, int y_length);
+  void setGridSize(double x_length, double y_length);
   void setRansacMaxIter(int max_num);
   void setRansacDistThres(float dist_threshold);
   void removeGround();
@@ -36,8 +36,8 @@ public:
 private:
   void setRemoveGroundArea();
   void divideGrid();
-  int grid_x_len_;
-  int grid_y_len_;
+  double grid_x_len_;
+  double grid_y_len_;
   std::vector<pcl::PointCloud<pcl::PointXYZRGB> > grid_cloud_vec_;
   std::vector<PlaneModelParam> plane_coefficient_vec_;
   pcl::PointCloud<pcl::PointXYZRGB> ground_removed_cloud_;
