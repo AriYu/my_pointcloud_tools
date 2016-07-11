@@ -36,9 +36,9 @@ RansacRemoveGround::RansacRemoveGround(pcl::PointCloud<pcl::PointXYZRGB>::Ptr so
 {
   source_cloud_ptr_ = source_cloud_ptr;
 
-  this->setGridSize(0.3, 0.3);
+  this->setGridSize(1.5, 1.5);
   this->setRemoveGroundArea();
-  this->setRansacDistThres(0.3);
+  this->setRansacDistThres(0.15);
   this->setRansacMaxIter(100000);
 }
 
