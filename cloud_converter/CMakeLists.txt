@@ -14,3 +14,6 @@ add_definitions(${PCL_DEFINITIONS})
 
 add_executable (cloud_converter src/cloud_converter.cpp)
 target_link_libraries (cloud_converter ${PCL_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
+
+add_executable (pcd_ascii2binary src/pcd_ascii2binary.cpp)
+target_link_libraries (pcd_ascii2binary ${PCL_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
