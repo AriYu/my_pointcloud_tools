@@ -71,7 +71,7 @@ int main (int argc, char* argv[])
   try {
     boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
     if( vm.count("help") ){
-      std::cout << "Basic Command Line Parameter App" << std::endl;
+      std::cout << "Transform point cloud to mesh file" << std::endl;
       std::cerr << desc << std::endl;
       return 0;
     }
