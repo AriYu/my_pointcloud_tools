@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 2.8)
+project(my_pointcloud_tools)
+
+add_subdirectory(cloud_clusterer)
+add_subdirectory(cloud_converter)
+add_subdirectory(cloud_ground_remover)
+add_subdirectory(cloud_icp_matcher)
+add_subdirectory(cloud_resizer)
+add_subdirectory(cloud_transformer)
+add_subdirectory(cloud_viewer)
