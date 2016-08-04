@@ -18,19 +18,18 @@ You should use `out of source` method.
 
 ```bash
 $ cd my_pointcloud_tools  
-$ cd <hogehoge>  
-$ mkdir build  
-$ cd build  
+$ mkdir build && cd build  
 $ cmake ..  
-$ make  
+$ make -j4
 ```
 
 ## Usage
 
-You can use `--help` option.
+You can use `--help` option.  
+For example, 
 ```bash
-$ cd build
-$ ./hogehoge --help
+$ cd build/cloud_viewer
+$ ./cloud_viewer --help
 ```
 
 ## License
