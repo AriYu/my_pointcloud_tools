@@ -54,10 +54,11 @@ int main (int argc, char** argv)
   mls.setPolynomialFit (true);
   mls.setSearchMethod (tree);
   mls.setSearchRadius (0.1);
-
   // Reconstruct
   mls.process (mls_points);
-
+  
   // Save output
   pcl::io::savePCDFile ("bun0-mls.pcd", mls_points);
+
+  
 }
