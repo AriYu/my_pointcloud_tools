@@ -3,3 +3,5 @@
 /cloud_resizer/resized.pcd
 /build
 /README.html
+clouds
+*.pcd
