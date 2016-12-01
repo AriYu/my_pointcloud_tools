@@ -18,7 +18,7 @@ This show some point clouds file as one pointcloud.
 ### Usage examples
 ```bash
 $ cd path/to/my_cloud_tools/build/cloud_viewer
-$ ./cloud_viewer_multi path/to/cloud1.pcd path/to/cloud2.pcd
+$ ./multi_cloud_viewer path/to/cloud1.pcd path/to/cloud2.pcd
 ```
 If you want to show many pcd files at once, you can use following command.  
 ```bash
