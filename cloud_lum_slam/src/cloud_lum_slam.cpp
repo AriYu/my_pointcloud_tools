@@ -72,10 +72,10 @@ main (int argc, char **argv)
   int lumIter = 30;
   pcl::console::parse_argument (argc, argv, "-l", lumIter);
 
-  double loopDist = 5.0;
+  double loopDist = 1.0;
   pcl::console::parse_argument (argc, argv, "-D", loopDist);
 
-  int loopCount = 50;
+  int loopCount = 9000;
   pcl::console::parse_argument (argc, argv, "-c", loopCount);
 
   pcl::registration::LUM<PointType> lum;
@@ -102,6 +102,7 @@ main (int argc, char **argv)
     std::cout << "loading file: " << argv[pcd_indices[i]] << " size: " << pc->size () << std::endl;
     if (use_pose) {
       lum.addPointCloud(clouds[i].second, poses[i]);
+      std::cout << "pose :" << poses[i] << std::endl;
     }else{
       lum.addPointCloud (clouds[i].second);
     }
@@ -114,16 +115,26 @@ main (int argc, char **argv)
       for (size_t j = 0; j < i; j++)
       {
         Eigen::Vector4f ci, cj;
-        pcl::compute3DCentroid (*(clouds[i].second), ci);
-        pcl::compute3DCentroid (*(clouds[j].second), cj);
+        if(use_pose){
+          ci(0, 0) = poses[i](0, 0);
+          ci(1, 0) = poses[i](1, 0);
+          ci(2, 0) = poses[i](2, 0);
+          ci(3, 0) = 0.0;
+          cj(0, 0) = poses[j](0, 0);
+          cj(1, 0) = poses[j](1, 0);
+          cj(2, 0) = poses[j](2, 0);
+          cj(3, 0) = 0.0;
+        }else{
+          pcl::compute3DCentroid (*(clouds[i].second), ci);
+          pcl::compute3DCentroid (*(clouds[j].second), cj);
+        }
         Eigen::Vector4f diff = ci - cj;
-
         //std::cout << i << " " << j << " " << diff.norm () << std::endl;
-
         if(diff.norm () < loopDist && (i - j == 1 || i - j > loopCount))
         {
-          if(i - j > loopCount)
-            std::cout << "add connection between " << i << " (" << clouds[i].first << ") and " << j << " (" << clouds[j].first << ")" << std::endl;
+          // if(i - j > loopCount)
+
+          std::cout << "add connection between " << i << " (" << clouds[i].first << ") and " << j << " (" << clouds[j].first << ")" << std::endl;
           pcl::registration::CorrespondenceEstimation<PointType, PointType> ce;
           ce.setInputTarget (clouds[i].second);
           ce.setInputSource (clouds[j].second);
@@ -171,10 +182,11 @@ std::vector<Eigen::Vector6f> readFromCsv(std::string filename)
     Eigen::Vector6f pose;
     int count = 0;
     while(getline(stream, token, ',')){
-      pose(0, 0) = std::stof(token);
+      pose(count, 0) = std::stof(token);
       count++;
     }
     poses.push_back(pose);
   }
   return poses;
 }
+
