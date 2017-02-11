@@ -10,7 +10,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+add_definitions(${PCL_DEFINITIONS} "-std=c++11")
 
 add_executable (cloud_lum_slam src/cloud_lum_slam.cpp)
 target_link_libraries (cloud_lum_slam ${PCL_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)

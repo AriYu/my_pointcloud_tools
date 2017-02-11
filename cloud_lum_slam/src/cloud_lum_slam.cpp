@@ -45,6 +45,8 @@
 #include <pcl/registration/correspondence_estimation.h>
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 
 #include <vector>
@@ -55,6 +57,8 @@ typedef Cloud::ConstPtr CloudConstPtr;
 typedef Cloud::Ptr CloudPtr;
 typedef std::pair<std::string, CloudPtr> CloudPair;
 typedef std::vector<CloudPair> CloudVector;
+
+std::vector<Eigen::Vector6f> readFromCsv(std::string filename);
 
 int
 main (int argc, char **argv)
@@ -81,6 +85,14 @@ main (int argc, char **argv)
   std::vector<int> pcd_indices;
   pcd_indices = pcl::console::parse_file_extension_argument (argc, argv, ".pcd");
 
+  std::vector<int> pose_file;
+  std::vector<Eigen::Vector6f> poses;
+  bool use_pose = false;
+  if (pose_file.size() != 0) {
+    poses = readFromCsv(argv[pose_file[0]]);
+    use_pose = true;
+  }
+  
   CloudVector clouds;
   for (size_t i = 0; i < pcd_indices.size (); i++)
   {
@@ -88,7 +100,11 @@ main (int argc, char **argv)
     pcl::io::loadPCDFile (argv[pcd_indices[i]], *pc);
     clouds.push_back (CloudPair (argv[pcd_indices[i]], pc));
     std::cout << "loading file: " << argv[pcd_indices[i]] << " size: " << pc->size () << std::endl;
-    lum.addPointCloud (clouds[i].second);
+    if (use_pose) {
+      lum.addPointCloud(clouds[i].second, poses[i]);
+    }else{
+      lum.addPointCloud (clouds[i].second);
+    }
   }
 
   for (int i = 0; i < iter; i++)
@@ -138,4 +154,27 @@ main (int argc, char **argv)
   }
 
   return 0;
+}
+
+std::vector<Eigen::Vector6f> readFromCsv(std::string filename)
+{
+  std::ifstream ifs(filename.c_str());
+  if(!ifs){
+    std::cout << "Pose file is found in args, but it is invalid filepath." << std::endl;
+    exit(-1);
+  }
+  std::string str;
+  std::vector<Eigen::Vector6f> poses;
+  while(getline(ifs, str)){
+    std::string token;
+    std::istringstream stream(str);
+    Eigen::Vector6f pose;
+    int count = 0;
+    while(getline(stream, token, ',')){
+      pose(0, 0) = std::stof(token);
+      count++;
+    }
+    poses.push_back(pose);
+  }
+  return poses;
 }
