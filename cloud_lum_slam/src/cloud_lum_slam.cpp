@@ -86,6 +86,7 @@ main (int argc, char **argv)
   pcd_indices = pcl::console::parse_file_extension_argument (argc, argv, ".pcd");
 
   std::vector<int> pose_file;
+  pose_file = pcl::console::parse_file_extension_argument(argc, argv, ".csv");
   std::vector<Eigen::Vector6f> poses;
   bool use_pose = false;
   if (pose_file.size() != 0) {
